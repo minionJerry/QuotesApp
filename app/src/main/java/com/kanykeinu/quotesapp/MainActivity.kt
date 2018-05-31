@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
     private val QUOTES_PER_REQUEST: Int = 5
     private var quotes : List<Quote>? = null
 
-    val geeks = listOf("life", "random", "love", "motivation", "happiness", "productivity")
+    val geeks = listOf("#life", "#love", "#motivation", "#fails" ,"#happiness", "#productivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -64,6 +64,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun fetchQuote(tag: String){
+        var tag = tag.removePrefix("#")
         val apiService = PaperQuotesServiceApi.create()
         apiService.getQuote(API_KEY,tag,QUOTES_PER_REQUEST)
                 .observeOn(AndroidSchedulers.mainThread())
