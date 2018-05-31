@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.kanykeinu.quotesapp.MainActivity">
+
+  <android.support.v7.widget.RecyclerView
+      android:id="@+id/categoriesList"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layoutAnimation="@anim/layout_category_anim"/>
+
+
+    <include layout="@layout/quote_item_big"
+        android:id="@+id/big"
+        android:layout_below="@id/categoriesList"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:layout_height="230dp"
+        android:layout_width="300dp" />
+
+  <android.support.v7.widget.RecyclerView
+      android:id="@+id/quotesList"
+      android:layout_below="@id/big"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      android:layout_marginTop="16dp"
+      android:layout_marginBottom="8dp"
+      android:layoutAnimation="@anim/layout_quote_anim"/>
+
+</RelativeLayout>
