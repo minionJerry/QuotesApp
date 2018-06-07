@@ -9,15 +9,15 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import com.kanykeinu.quotesapp.R
-import com.kanykeinu.quotesapp.R.id.category
 import com.kanykeinu.quotesapp.R.id.parent
 import kotlinx.android.synthetic.main.category_item.view.*
+import kotlinx.android.synthetic.main.subcategory_item.view.*
 import java.util.*
 
 /**
  * Created by KanykeiNu on 14.05.2018.
  */
-class CategoryAdapter(private val context: Context, private val objects: List<String>, private val onCategorySelected: onItemSelected) : BaseAdapter<String>(context,objects){
+class CategoryAdapter(private val context: Context, private val objects: List<String>, private val isCategory: Boolean, private val onCategorySelected: onItemSelected) : BaseAdapter<String>(context,objects){
 
     override fun onBindData(holder: RecyclerView.ViewHolder, obj: String) {
         val viewHolder = holder as CategoryViewHolder
@@ -34,14 +34,16 @@ class CategoryAdapter(private val context: Context, private val objects: List<St
     }
 
     override fun setViewHolder(parent: ViewGroup): RecyclerView.ViewHolder {
-        val view = LayoutInflater.from(context).inflate(R.layout.category_item,parent,false)
+        var layoutRes : Int
+        if (isCategory) layoutRes = R.layout.category_item else layoutRes = R.layout.subcategory_item
+        val view = LayoutInflater.from(context).inflate(layoutRes,parent,false)
         return CategoryViewHolder(view)
     }
 
     class CategoryViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView){
-
         fun bind(category: String) {
-            itemView.category.text = category
+            itemView.category?.text = category
+            itemView.subCategory?.text = category
         }
     }
 

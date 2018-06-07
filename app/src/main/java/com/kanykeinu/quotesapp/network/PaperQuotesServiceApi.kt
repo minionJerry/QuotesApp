@@ -1,7 +1,5 @@
 package com.kanykeinu.quotesapp.network
 
-import com.kanykeinu.quotesapp.model.Quote
-import com.kanykeinu.quotesapp.model.Response
 import io.reactivex.Observable
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -17,8 +15,8 @@ import retrofit2.http.Query
  */
 interface PaperQuotesServiceApi {
 
-    @GET("quotes")
-    fun getQuote(@Header("Authorization") apiKey : String, @Query("tags") tag: String, @Query("limit") count : Int) : Observable<Response>
+//    @GET("quoteModels")
+//    fun getQuote(@Header("Authorization") apiKey : String, @Query("tags") tag: String, @Query("limit") count : Int) : Observable<Response>
 
     companion object {
         val BASE_URL : String = "https://api.paperquotes.com/apiv1/"

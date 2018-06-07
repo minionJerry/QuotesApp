@@ -37,7 +37,7 @@
             android:layout_marginTop="16dp"
             android:contentDescription="quotes"
             android:src="@drawable/icons_quote"
-            app:layout_constraintBottom_toTopOf="@+id/quote"
+            app:layout_constraintBottom_toTopOf="@+id/quoteModel"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.531"
             app:layout_constraintStart_toStartOf="parent"

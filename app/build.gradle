@@ -24,7 +24,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'
     testImplementation 'junit:junit:4.12'
@@ -45,5 +45,10 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:3.10.0'
     implementation "io.reactivex.rxjava2:rxandroid:2.0.2"
     implementation "com.andkulikov:transitionseverywhere:1.7.9"
+
+    //Database
+    implementation "android.arch.persistence.room:runtime:1.1.1-rc1"
+    implementation "android.arch.persistence.room:rxjava2:1.1.0"
+    implementation "io.reactivex.rxjava2:rxandroid:2.0.2"
 }
 apply plugin: 'com.google.gms.google-services'

@@ -12,32 +12,52 @@ import com.kanykeinu.quotesapp.adapter.CategoryAdapter
 import com.kanykeinu.quotesapp.adapter.QuoteAdapter
 import kotlinx.android.synthetic.main.activity_main.*
 import com.kanykeinu.quotesapp.adapter.onItemSelected
-import com.kanykeinu.quotesapp.model.Quote
+import com.kanykeinu.quotesapp.model.QuoteModel
 import com.kanykeinu.quotesapp.network.PaperQuotesServiceApi
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.quote_item_big.*
 import android.view.animation.AnimationUtils
-
+import com.google.firebase.database.*
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ChildEventListener
 
 class MainActivity : AppCompatActivity() {
     private val API_KEY : String ="Token e2eeb1aa9f32eb07fa04595a0c457ecb6fadb772"
     private val QUOTES_PER_REQUEST: Int = 5
-    private var quotes : List<Quote>? = null
+    private var quoteModels : List<QuoteModel>? = null
+    private var mFirebaseDatabase: FirebaseDatabase? = null
+    private var mQuotesDatabaseReference: DatabaseReference? = null
+    private var quotesListener: ValueEventListener? = null
 
-    val geeks = listOf("#life", "#love", "#motivation", "#fails" ,"#happiness", "#productivity")
+    val categories : MutableList<String> = mutableListOf<String>()
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+//        initFirebase()
+//        attachDatabaseReadListener()
         initCategories()
-
     }
+
+    override fun onStop() {
+        super.onStop()
+//        detachDatabaseReadListener()
+    }
+
+//    fun initFirebase(){
+//        mFirebaseDatabase = FirebaseDatabase.getInstance()
+//        mQuotesDatabaseReference = mFirebaseDatabase!!.getReference().child("quoteModels")
+//    }
+
+    private var categoryAdapter: CategoryAdapter? = null
 
     fun initCategories(){
         var maps : HashMap<String, Boolean> = hashMapOf()
-        for (geek in geeks)
-            maps.set(geek,false)
-        val categoryAdapter = CategoryAdapter(this,geeks,object : onItemSelected{
+        for (category in categories)
+            maps.set(category,false)
+        categoryAdapter = CategoryAdapter(this,categories,false,object : onItemSelected{
             override fun itemPressed(obj: Any, view: View) {
                 fetchQuote(obj as String)
                 var isSelected = maps.get(obj)
@@ -64,29 +84,29 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun fetchQuote(tag: String){
-        var tag = tag.removePrefix("#")
-        val apiService = PaperQuotesServiceApi.create()
-        apiService.getQuote(API_KEY,tag,QUOTES_PER_REQUEST)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe({
-                    result ->
-                    Log.d("Result",result.results.toString())
-                    quotes = result.results
-                    initQuotesList()
-                },
-                { error ->
-                    Log.e("Ooops!",error.message)
-                })
+//        var tag = tag.removePrefix("#")
+//        val apiService = PaperQuotesServiceApi.create()
+//        apiService.getQuote(API_KEY,tag,QUOTES_PER_REQUEST)
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribeOn(Schedulers.io())
+//                .subscribe({
+//                    result ->
+//                    Log.d("Result",result.results.toString())
+//                    quoteModels = result.results
+//                    initQuotesList()
+//                },
+//                { error ->
+//                    Log.e("Ooops!",error.message)
+//                })
     }
 
     fun initQuotesList(){
-        val quoteAdapter = QuoteAdapter(this, quotes!!,object : onItemSelected{
+        val quoteAdapter = QuoteAdapter(this, quoteModels!!,object : onItemSelected{
             override fun itemPressed(obj: Any, view: View) {
-                var obj = obj as Quote
+                var obj = obj as QuoteModel
                 bigQuoteText.text = obj.quote
                 bigQuoteAuthor.text = obj.author
-                Log.d("Quote", "selected is" + obj.quote)
+                Log.d("QuoteModel", "selected is" + obj.quote)
 //                    val animation = ObjectAnimator.ofFloat(view, "translationY", 100f)
 ////                    animation.setInterpolator(pathInterpolator);
 //                    animation.duration = 2000
@@ -106,4 +126,43 @@ class MainActivity : AppCompatActivity() {
         quotesList.scheduleLayoutAnimation();
 
     }
+
+
+    private var mChildListener: ChildEventListener? = null
+
+//    private fun attachDatabaseReadListener() {
+//        if (mChildListener == null) {
+//            mChildListener = object : ChildEventListener {
+//                override fun onChildAdded(dataSnapshot: DataSnapshot, prevChildKey: String?) {
+//                    val category = dataSnapshot.getValue<CategoryModel>(CategoryModel::class.java)
+//                    categories.add(removePreffix(category?.category!!))
+//                    categoryAdapter?.notifyDataSetChanged()
+//                    println("Previous Post ID: " + category)
+//                }
+//
+//                override fun onChildChanged(dataSnapshot: DataSnapshot, prevChildKey: String?) {}
+//
+//                override fun onChildRemoved(dataSnapshot: DataSnapshot) {}
+//
+//                override fun onChildMoved(dataSnapshot: DataSnapshot, prevChildKey: String?) {}
+//
+//                override fun onCancelled(databaseError: DatabaseError) {}
+//            }
+//            mQuotesDatabaseReference?.addChildEventListener(mChildListener)
+//        }
+//    }
+//
+//    private fun detachDatabaseReadListener() {
+//        if (mQuotesDatabaseReference != null) {
+//            mQuotesDatabaseReference?.removeEventListener(mChildListener)
+//            mChildListener = null
+//        }
+//    }
+
+//    private fun removePreffix(category: String) : String{
+//        if (category.contains(" ПРО "))
+//            return category.replaceBefore("ПРО","")
+//        else
+//            return category.replaceBefore(" О ","")
+//    }
 }
