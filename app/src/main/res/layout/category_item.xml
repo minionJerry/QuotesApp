@@ -1,19 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="80dp"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content"
     android:layout_width="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/category_selector"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
+    android:layout_marginStart="32dp"
+    android:layout_marginEnd="32dp"
+    android:orientation="horizontal"
+    android:layout_gravity="center"
     >
 
     <TextView
         android:id="@+id/category"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
+        android:gravity="center"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="8dp"
+        android:paddingTop="8dp"
         android:textSize="16sp"
-        android:textColor="@android:color/black"
-        tools:text="@sample/tools:lorem" />
+        android:textColor="@drawable/category_text_selector"
+        tools:text="@sample/tools:lorem"
+        android:minLines="2"/>
 
-</FrameLayout>
+</LinearLayout>

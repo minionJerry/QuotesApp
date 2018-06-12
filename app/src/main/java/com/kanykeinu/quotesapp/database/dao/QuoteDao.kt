@@ -11,15 +11,18 @@ interface QuoteDao {
     fun getAll(): Flowable<List<Quote>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(child: Quote)
+    fun insert(quote: Quote) : Long
 
     @Delete
-    fun delete(child: Quote)
+    fun delete(quote: Quote)
 
     @Update
-    fun update(child: Quote)
+    fun update(quote: Quote)
 
     @Query("Select * from quote where id = :id")
-    fun getById(id : Int) : Flowable<Quote>
+    fun getById(id : Long) : Flowable<Quote>
+
+    @Query("Select * from quote where sub_category_id = :id")
+    fun getQuotesBySubCategoryId(id : Long) : Flowable<List<Quote>>
 
 }

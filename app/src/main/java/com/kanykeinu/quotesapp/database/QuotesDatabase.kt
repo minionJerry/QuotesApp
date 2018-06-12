@@ -7,11 +7,14 @@ import android.content.Context
 import com.kanykeinu.quotesapp.database.dao.CategoryDao
 import com.kanykeinu.quotesapp.database.dao.QuoteDao
 import com.kanykeinu.quotesapp.database.dao.SubCategoryDao
+import com.kanykeinu.quotesapp.database.entity.Category
+import com.kanykeinu.quotesapp.database.entity.Quote
+import com.kanykeinu.quotesapp.database.entity.SubCategory
 import com.kanykeinu.quotesapp.model.CategoryModel
 import com.kanykeinu.quotesapp.model.QuoteModel
 import com.kanykeinu.quotesapp.model.SubCategoryModel
 
-@Database(entities = arrayOf(CategoryModel::class,SubCategoryModel::class,QuoteModel::class), version = 0)
+@Database(entities = arrayOf(Category::class, SubCategory::class, Quote::class), version = 1)
 abstract class QuotesDatabase : RoomDatabase() {
     abstract fun categoryDao(): CategoryDao
     abstract fun subCategoryDao(): SubCategoryDao
@@ -25,7 +28,7 @@ abstract class QuotesDatabase : RoomDatabase() {
                 synchronized(QuotesDatabase::class.java) {
                     if (INSTANCE == null) {
                         INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                                QuotesDatabase::class.java!!, "Quotes.db")
+                                QuotesDatabase::class.java, "Quotes.db")
                                 .fallbackToDestructiveMigration()
                                 .allowMainThreadQueries()
                                 .build()

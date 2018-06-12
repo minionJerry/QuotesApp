@@ -28,7 +28,7 @@ abstract class BaseAdapter<T>(private val mContext: Context, private var objects
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        onBindData(holder, objects!![position])
-        holder.itemView.setOnClickListener { onHolderClick(objects!![position], holder.itemView as View) }
+        onBindData(holder, objects[position])
+        holder.itemView.setOnClickListener { onHolderClick(objects[position], holder.itemView as View) }
     }
 }

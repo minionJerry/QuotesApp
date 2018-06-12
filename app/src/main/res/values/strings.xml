@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Цитатник</string>
     <string name="data_saved">Успешно сохранено</string>
+    <string name="action_settings">Сохранить</string>
 </resources>

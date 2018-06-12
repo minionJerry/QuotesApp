@@ -13,104 +13,55 @@ import com.kanykeinu.quotesapp.adapter.QuoteAdapter
 import kotlinx.android.synthetic.main.activity_main.*
 import com.kanykeinu.quotesapp.adapter.onItemSelected
 import com.kanykeinu.quotesapp.model.QuoteModel
-import com.kanykeinu.quotesapp.network.PaperQuotesServiceApi
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.quote_item_big.*
 import android.view.animation.AnimationUtils
 import com.google.firebase.database.*
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ChildEventListener
+import com.kanykeinu.quotesapp.R.id.*
+import com.kanykeinu.quotesapp.database.QuotesDatabase
+import com.kanykeinu.quotesapp.database.entity.Category
+import com.kanykeinu.quotesapp.database.entity.Quote
 
 class MainActivity : AppCompatActivity() {
-    private val API_KEY : String ="Token e2eeb1aa9f32eb07fa04595a0c457ecb6fadb772"
-    private val QUOTES_PER_REQUEST: Int = 5
-    private var quoteModels : List<QuoteModel>? = null
-    private var mFirebaseDatabase: FirebaseDatabase? = null
-    private var mQuotesDatabaseReference: DatabaseReference? = null
-    private var quotesListener: ValueEventListener? = null
 
-    val categories : MutableList<String> = mutableListOf<String>()
-
+    private val quotes: MutableList<Quote> = mutableListOf()
+    private var sharedPreferences: SharedPreferencesManager? = null
+    private var database: QuotesDatabase? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-//        initFirebase()
-//        attachDatabaseReadListener()
-        initCategories()
+        sharedPreferences = SharedPreferencesManager(this)
+        database = QuotesDatabase.getInstance(this)
+        val subCategoryIds = sharedPreferences?.getSubCategories()
+        initQuotesList()
+        if (subCategoryIds != null) {
+            fetchQuote(subCategoryIds)
+        }
     }
 
-    override fun onStop() {
-        super.onStop()
-//        detachDatabaseReadListener()
-    }
-
-//    fun initFirebase(){
-//        mFirebaseDatabase = FirebaseDatabase.getInstance()
-//        mQuotesDatabaseReference = mFirebaseDatabase!!.getReference().child("quoteModels")
-//    }
-
-    private var categoryAdapter: CategoryAdapter? = null
-
-    fun initCategories(){
-        var maps : HashMap<String, Boolean> = hashMapOf()
-        for (category in categories)
-            maps.set(category,false)
-        categoryAdapter = CategoryAdapter(this,categories,false,object : onItemSelected{
-            override fun itemPressed(obj: Any, view: View) {
-                fetchQuote(obj as String)
-                var isSelected = maps.get(obj)
-                var view = view as TextView
-                if (isSelected!!) {
-                    maps.set(obj,false)
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        view.background = getDrawable(R.drawable.category_background)
-                        view.setTextColor(Color.WHITE)
-                    }
-                }
-                else {
-                    maps.set(obj,true)
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        view.background = getDrawable(R.drawable.category_background_pressed)
-                        view.setTextColor(getColor(R.color.colorPrimaryDark))
-                    }
-                }
+    private fun fetchQuote(ids: MutableSet<String>){
+            for (id in ids){
+                val lId = id.toLong()
+                database?.quoteDao()?.getQuotesBySubCategoryId(lId)
+                        ?.subscribe({ quote ->
+                            quotes.addAll(quote)
+                            runOnUiThread({
+                                initMainQuote()
+                                quotesList.adapter?.notifyDataSetChanged()})
+                        },{},{})
             }
-        })
-        val categoriesLayoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        categoriesList.layoutManager = categoriesLayoutManager
-        categoriesList.adapter = categoryAdapter
     }
 
-    fun fetchQuote(tag: String){
-//        var tag = tag.removePrefix("#")
-//        val apiService = PaperQuotesServiceApi.create()
-//        apiService.getQuote(API_KEY,tag,QUOTES_PER_REQUEST)
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribeOn(Schedulers.io())
-//                .subscribe({
-//                    result ->
-//                    Log.d("Result",result.results.toString())
-//                    quoteModels = result.results
-//                    initQuotesList()
-//                },
-//                { error ->
-//                    Log.e("Ooops!",error.message)
-//                })
-    }
-
-    fun initQuotesList(){
-        val quoteAdapter = QuoteAdapter(this, quoteModels!!,object : onItemSelected{
+    private fun initQuotesList(){
+        val quoteAdapter = QuoteAdapter(this, quotes ,object : onItemSelected{
             override fun itemPressed(obj: Any, view: View) {
-                var obj = obj as QuoteModel
-                bigQuoteText.text = obj.quote
+                var obj = obj as Quote
+                bigQuoteText.text = obj.text
                 bigQuoteAuthor.text = obj.author
-                Log.d("QuoteModel", "selected is" + obj.quote)
-//                    val animation = ObjectAnimator.ofFloat(view, "translationY", 100f)
-////                    animation.setInterpolator(pathInterpolator);
-//                    animation.duration = 2000
-//                    animation.start()
+                Log.d("QuoteModel", "selected is" + obj.text)
+                sharedPreferences?.saveLastQuoteId(obj.id)
             }
         })
 
@@ -120,49 +71,18 @@ class MainActivity : AppCompatActivity() {
         // run animation
         val  controller =
                 AnimationUtils.loadLayoutAnimation(this, R.anim.layout_quote_anim);
-
         quotesList.setLayoutAnimation(controller);
-        quotesList.getAdapter().notifyDataSetChanged();
+        quoteAdapter.notifyDataSetChanged();
         quotesList.scheduleLayoutAnimation();
 
     }
 
+    private fun initMainQuote(){
+        if (sharedPreferences?.getSavedLastQuoteId() != null){
+            bigQuoteText.text = quotes?.get(0)?.text
+            bigQuoteAuthor.text = quotes?.get(0)?.author
+        }
+    }
 
-    private var mChildListener: ChildEventListener? = null
 
-//    private fun attachDatabaseReadListener() {
-//        if (mChildListener == null) {
-//            mChildListener = object : ChildEventListener {
-//                override fun onChildAdded(dataSnapshot: DataSnapshot, prevChildKey: String?) {
-//                    val category = dataSnapshot.getValue<CategoryModel>(CategoryModel::class.java)
-//                    categories.add(removePreffix(category?.category!!))
-//                    categoryAdapter?.notifyDataSetChanged()
-//                    println("Previous Post ID: " + category)
-//                }
-//
-//                override fun onChildChanged(dataSnapshot: DataSnapshot, prevChildKey: String?) {}
-//
-//                override fun onChildRemoved(dataSnapshot: DataSnapshot) {}
-//
-//                override fun onChildMoved(dataSnapshot: DataSnapshot, prevChildKey: String?) {}
-//
-//                override fun onCancelled(databaseError: DatabaseError) {}
-//            }
-//            mQuotesDatabaseReference?.addChildEventListener(mChildListener)
-//        }
-//    }
-//
-//    private fun detachDatabaseReadListener() {
-//        if (mQuotesDatabaseReference != null) {
-//            mQuotesDatabaseReference?.removeEventListener(mChildListener)
-//            mChildListener = null
-//        }
-//    }
-
-//    private fun removePreffix(category: String) : String{
-//        if (category.contains(" ПРО "))
-//            return category.replaceBefore("ПРО","")
-//        else
-//            return category.replaceBefore(" О ","")
-//    }
 }

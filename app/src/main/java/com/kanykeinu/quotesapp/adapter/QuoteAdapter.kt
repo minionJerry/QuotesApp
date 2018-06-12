@@ -6,20 +6,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.kanykeinu.quotesapp.R
-import com.kanykeinu.quotesapp.model.QuoteModel
+import com.kanykeinu.quotesapp.database.entity.Quote
 import kotlinx.android.synthetic.main.quote_item.view.*
 
 /**
  * Created by KanykeiNu on 14.05.2018.
  */
-class QuoteAdapter (private val context: Context, private val objects: List<QuoteModel>, private val onQuoteSelected: onItemSelected) : BaseAdapter<QuoteModel>(context,objects){
+class QuoteAdapter (private val context: Context, private val objects: MutableList<Quote>, private val onQuoteSelected: onItemSelected) : BaseAdapter<Quote>(context,objects){
 
-    override fun onBindData(holder: RecyclerView.ViewHolder, obj: QuoteModel) {
+    override fun onBindData(holder: RecyclerView.ViewHolder, obj: Quote) {
         val viewHolder = holder as QuoteViewHolder
         viewHolder.bind(obj)
     }
 
-    override fun onHolderClick(obj: QuoteModel, view: View) {
+    override fun onHolderClick(obj: Quote, view: View) {
         onQuoteSelected.itemPressed(obj,view)
     }
 
@@ -33,9 +33,9 @@ class QuoteAdapter (private val context: Context, private val objects: List<Quot
     }
 
     class QuoteViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView){
-        fun bind(quoteModel: QuoteModel) {
-            itemView.quote.text = quoteModel.quote
-            itemView.author.text = quoteModel.author
+        fun bind(quote: Quote) {
+            itemView.quote.text = quote.text
+            itemView.author.text = quote.author
         }
     }
 }

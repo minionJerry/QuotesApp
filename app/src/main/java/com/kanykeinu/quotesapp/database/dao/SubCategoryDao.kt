@@ -11,15 +11,18 @@ interface SubCategoryDao {
     fun getAll(): Flowable<List<SubCategory>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(child: SubCategory) : Long
+    fun insert(subCategory: SubCategory) : Long
 
     @Delete
-    fun delete(child: SubCategory)
+    fun delete(subCategory: SubCategory)
 
     @Update
-    fun update(child: SubCategory)
+    fun update(subCategory: SubCategory)
 
     @Query("Select * from sub_category where id = :id")
     fun getById(id : Int) : Flowable<SubCategory>
+
+    @Query("Select * from sub_category where category_id = :categoryId ")
+    fun getSubCategoriesByCategory(categoryId  : Long) :Flowable<List<SubCategory>>
 
 }

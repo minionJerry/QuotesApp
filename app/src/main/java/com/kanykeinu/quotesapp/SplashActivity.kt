@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import com.google.firebase.database.*
 import com.kanykeinu.quotesapp.database.QuotesDatabase
+import com.kanykeinu.quotesapp.database.entity.Category
 import com.kanykeinu.quotesapp.database.entity.Quote
 import com.kanykeinu.quotesapp.database.entity.SubCategory
 import com.kanykeinu.quotesapp.model.CategoryModel
@@ -12,52 +13,54 @@ import com.kanykeinu.quotesapp.model.QuoteModel
 import com.kanykeinu.quotesapp.model.SubCategoryModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.Consumer
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.ValueEventListener
+
+
 
 class SplashActivity : Activity() {
 
     private var mFirebaseDatabase: FirebaseDatabase? = null
     private var mQuotesDatabaseReference: DatabaseReference? = null
     private var mChildListener: ChildEventListener? = null
-    private val categoryModels: MutableList<CategoryModel> = mutableListOf<CategoryModel>()
-
+    private var mEventListener: ValueEventListener? = null
     private var database: QuotesDatabase? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
         database = QuotesDatabase.getInstance(this)
-        database?.categoryDao()?.getAll()
+        database?.quoteDao()?.getAll()
                         ?.observeOn(AndroidSchedulers.mainThread())
-                        ?.subscribe(Consumer { categories ->
-                            if (categories.size!=0) {
+                        ?.subscribe(Consumer { quotes ->
+                           if (quotes.size==0) {
                                 initFirebase()
                                 attachDatabaseReadListener()
-                            }else
-                                startActivity(Intent(this,StartActivity::class.java))
-                            finish()
+                            }else {
+                                startActivity(Intent(this, MainActivity::class.java))
+                                finish()
+                            }
                         })
-
     }
+
 
     override fun onStop() {
         super.onStop()
         detachDatabaseReadListener()
     }
 
-
     fun initFirebase(){
         mFirebaseDatabase = FirebaseDatabase.getInstance()
-        mQuotesDatabaseReference = mFirebaseDatabase!!.getReference().child("quoteModels")
+        mQuotesDatabaseReference = mFirebaseDatabase!!.getReference().child("quotes")
     }
 
     private fun attachDatabaseReadListener() {
-        if (mChildListener == null) {
+        if (mChildListener == null && mEventListener==null) {
             mChildListener = object : ChildEventListener {
                 override fun onChildAdded(dataSnapshot: DataSnapshot, prevChildKey: String?) {
                     val category = dataSnapshot.getValue<CategoryModel>(CategoryModel::class.java)
                     category?.category = removePreffix(category?.category!!)
                     addCategoryToLocalDb(category)
-                    showToast(category.category + " " + getString(R.string.data_saved))
                     println("Previous Post ID: " + category)
                 }
 
@@ -69,6 +72,18 @@ class SplashActivity : Activity() {
 
                 override fun onCancelled(databaseError: DatabaseError) {}
             }
+
+            mEventListener = object : ValueEventListener {
+                override fun onCancelled(p0: DatabaseError?) {}
+
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    println("We're done loading the initial " + dataSnapshot.childrenCount + " items")
+                    startActivity(Intent(this@SplashActivity, StartActivity::class.java))
+                    finish()
+                }
+            }
+
+            mQuotesDatabaseReference?.addListenerForSingleValueEvent(mEventListener)
             mQuotesDatabaseReference?.addChildEventListener(mChildListener)
         }
     }
@@ -88,27 +103,28 @@ class SplashActivity : Activity() {
     }
 
     private fun addCategoryToLocalDb(categoryModel: CategoryModel){
-        val categoryId  = database?.categoryDao()?.insert(com.kanykeinu.quotesapp.database.entity.Category(0,categoryModel.category))
+        val categoryId  = database?.categoryDao()?.insert(Category(0,categoryModel.category))
         if (categoryId != null) {
-            addSubCategoryToLocalDb(categoryModel.subCategoryModels,categoryId)
+            addSubCategoryToLocalDb(categoryModel.subCategories,categoryId)
         }
     }
 
     private fun addSubCategoryToLocalDb(subCategoryModels: List<SubCategoryModel>?, categoryId : Long){
         if (subCategoryModels != null) {
             for (subCategory in subCategoryModels) {
-                val subCategoryId = database?.subCategoryDao()?.insert(SubCategory(0, subCategory.subCategory, categoryId!!))
+                val subCategoryId = database?.subCategoryDao()?.insert(SubCategory(0, subCategory.subCategory, categoryId))
                 if (subCategoryId != null) {
-                    addQuotesToLocalDb(subCategory.quoteModels!!, subCategoryId)
+                    addQuotesToLocalDb(subCategory.quotes, subCategoryId)
                 }
             }
         }
     }
 
-    private fun addQuotesToLocalDb(quotes : List<QuoteModel>,subCategoryId : Long){
-        for (quote in quotes){
-            database?.quoteDao()?.insert(Quote(0, quote.author!!, quote.quote!!,subCategoryId))
+    private fun addQuotesToLocalDb(quotes: List<QuoteModel>?, subCategoryId: Long){
+        if (quotes != null) {
+            for (quote in quotes){
+                database?.quoteDao()?.insert(Quote(0, quote.author!!, quote.quote!!,subCategoryId))
+            }
         }
-
     }
 }

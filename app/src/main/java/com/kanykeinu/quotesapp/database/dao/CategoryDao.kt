@@ -10,16 +10,17 @@ interface CategoryDao {
     fun getAll(): Flowable<List<Category>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(child: Category) : Long
+    fun insert(category: Category) : Long
 
     @Delete
-    fun delete(child: Category)
+    fun delete(category: Category)
 
     @Update
-    fun update(child: Category)
+    fun update(category: Category)
 
     @Query("Select * from category where id = :id")
     fun getById(id : Int) : Flowable<Category>
 
-
+    @Query("delete from category")
+    fun deleteAll()
 }

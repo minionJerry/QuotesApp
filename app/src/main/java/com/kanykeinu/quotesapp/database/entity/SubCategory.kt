@@ -15,7 +15,7 @@ data class SubCategory(
         @PrimaryKey(autoGenerate = true)
         val id : Long,
         @ColumnInfo(name = "sub_category")
-        val subCategory : String?,
+        var subCategory : String?,
         @ColumnInfo(name = "category_id")
         val categoryId : Long
 )

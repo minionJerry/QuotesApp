@@ -11,10 +11,11 @@
     android:textSize="16sp"
     android:background="@color/colorViolet"
     android:layout_width="300dp"
-    android:layout_height="230dp"
+    android:layout_height="250dp"
     card_view:cardCornerRadius="4dp"
     card_view:cardElevation="4dp"
-    card_view:cardMaxElevation="6dp">
+    card_view:cardMaxElevation="6dp"
+    app:cardUseCompatPadding="true">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
@@ -25,59 +26,65 @@
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:layout_gravity="top|center_horizontal"
+            android:layout_marginBottom="8dp"
             android:layout_marginEnd="65dp"
             android:layout_marginLeft="65dp"
             android:layout_marginRight="65dp"
             android:layout_marginStart="65dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:contentDescription="quotes"
             android:src="@drawable/icons_quote"
+            app:layout_constraintBottom_toTopOf="@+id/bigQuoteText"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="spread_inside" />
+            app:layout_constraintVertical_bias="1.0" />
 
         <TextView
             android:id="@+id/bigQuoteText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:gravity="center"
+            android:maxLines="10"
             android:paddingEnd="16dp"
             android:paddingStart="16dp"
-            android:maxLines="5"
-            android:textSize="18sp"
             android:text="Как басня, так и жизнь ценится не за длину, но за содержание."
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/bigQuoteImg" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/bigQuoteAuthor"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center_horizontal"
-            android:layout_marginBottom="24dp"
+            android:layout_marginBottom="16dp"
             android:layout_marginEnd="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
             android:gravity="center"
             android:maxLines="1"
             android:paddingEnd="24dp"
             android:paddingStart="24dp"
-            android:textSize="14sp"
             android:text="Сенека"
+            android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/bigQuoteText" />
 
     </android.support.constraint.ConstraintLayout>
 
