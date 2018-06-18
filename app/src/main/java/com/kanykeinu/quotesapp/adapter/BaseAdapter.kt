@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.kanykeinu.quotesapp.model.SelectableItem
 
 /**
  * Created by KanykeiNu on 14.05.2018.
@@ -19,7 +20,7 @@ abstract class BaseAdapter<T>(private val mContext: Context, private var objects
 
     abstract fun onBindData(holder: RecyclerView.ViewHolder, obj : T)
 
-    abstract fun onHolderClick(obj: T,view : View)
+    abstract fun onHolderClick(obj: T,view : View,position: Int)
 
     abstract fun setSize(): Int
 
@@ -27,8 +28,17 @@ abstract class BaseAdapter<T>(private val mContext: Context, private var objects
         return setSize()
     }
 
+
+    override fun getItemId(position: Int): Long {
+        return super.getItemId(position)
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return super.getItemViewType(position)
+    }
+
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        onBindData(holder, objects[position])
-        holder.itemView.setOnClickListener { onHolderClick(objects[position], holder.itemView as View) }
+        onBindData(holder, objects.get(position))
+        holder.itemView.setOnClickListener { onHolderClick(objects[position], holder.itemView as View, position) }
     }
 }

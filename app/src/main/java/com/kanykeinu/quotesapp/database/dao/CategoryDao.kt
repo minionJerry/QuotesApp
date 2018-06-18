@@ -7,7 +7,7 @@ import io.reactivex.Flowable
 @Dao
 interface CategoryDao {
     @Query("SELECT * from category")
-    fun getAll(): Flowable<List<Category>>
+    fun getAll(): MutableList<Category>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(category: Category) : Long

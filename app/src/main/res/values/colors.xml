@@ -12,5 +12,6 @@
     <color name="colorViolet">#24145F</color>
     <color name="colorYellow">#F6CE3B</color>
     <color name="colorLightViolet">#5A3CB2</color>
+    <color name="colorPressed">#087f23</color>
 
 </resources>

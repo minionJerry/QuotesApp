@@ -2,4 +2,8 @@
     <string name="app_name">Цитатник</string>
     <string name="data_saved">Успешно сохранено</string>
     <string name="action_settings">Сохранить</string>
+    <string name="category">Категории</string>
+    <string name="subcategories">Подкатегории</string>
+    <string name="choose_category">Выберите категорию</string>
+    <string name="choose_subcategory">Выберите подкатегорию</string>
 </resources>

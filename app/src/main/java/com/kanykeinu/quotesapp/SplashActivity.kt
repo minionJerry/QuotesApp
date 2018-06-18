@@ -30,17 +30,13 @@ class SplashActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
         database = QuotesDatabase.getInstance(this)
-        database?.quoteDao()?.getAll()
-                        ?.observeOn(AndroidSchedulers.mainThread())
-                        ?.subscribe(Consumer { quotes ->
-                           if (quotes.size==0) {
-                                initFirebase()
-                                attachDatabaseReadListener()
-                            }else {
-                                startActivity(Intent(this, MainActivity::class.java))
-                                finish()
-                            }
-                        })
+        var quotes = database?.quoteDao()?.getAll()
+        checkQuotesSize(quotes)
+//        database?.quoteDao()?.getAll()
+//                        ?.observeOn(AndroidSchedulers.mainThread())
+//                        ?.subscribe(Consumer { quotes ->
+//                           checkQuotesSize(quotes)
+//                        })
     }
 
 
@@ -49,7 +45,18 @@ class SplashActivity : Activity() {
         detachDatabaseReadListener()
     }
 
-    fun initFirebase(){
+    private fun checkQuotesSize(quotes: List<Quote>?){
+        if (quotes?.size == 0) {
+            initFirebase()
+            attachDatabaseReadListener()
+            return
+        }else {
+            startActivity(Intent(this, MainActivity::class.java))
+            finish()
+        }
+    }
+
+    private fun initFirebase(){
         mFirebaseDatabase = FirebaseDatabase.getInstance()
         mQuotesDatabaseReference = mFirebaseDatabase!!.getReference().child("quotes")
     }
@@ -91,7 +98,9 @@ class SplashActivity : Activity() {
     private fun detachDatabaseReadListener() {
         if (mQuotesDatabaseReference != null) {
             mQuotesDatabaseReference?.removeEventListener(mChildListener)
+            mQuotesDatabaseReference?.removeEventListener(mEventListener)
             mChildListener = null
+            mEventListener = null
         }
     }
 

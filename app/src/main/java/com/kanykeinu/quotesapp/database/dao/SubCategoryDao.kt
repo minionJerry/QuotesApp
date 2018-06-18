@@ -23,6 +23,6 @@ interface SubCategoryDao {
     fun getById(id : Int) : Flowable<SubCategory>
 
     @Query("Select * from sub_category where category_id = :categoryId ")
-    fun getSubCategoriesByCategory(categoryId  : Long) :Flowable<List<SubCategory>>
+    fun getSubCategoriesByCategory(categoryId  : Long) : List<SubCategory>
 
 }

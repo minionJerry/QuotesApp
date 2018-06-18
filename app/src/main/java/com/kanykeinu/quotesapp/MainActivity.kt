@@ -1,27 +1,21 @@
 package com.kanykeinu.quotesapp
 
-import android.graphics.Color
-import android.os.Build
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
-import android.widget.TextView
-import com.kanykeinu.quotesapp.adapter.CategoryAdapter
 import com.kanykeinu.quotesapp.adapter.QuoteAdapter
 import kotlinx.android.synthetic.main.activity_main.*
-import com.kanykeinu.quotesapp.adapter.onItemSelected
-import com.kanykeinu.quotesapp.model.QuoteModel
 import kotlinx.android.synthetic.main.quote_item_big.*
 import android.view.animation.AnimationUtils
-import com.google.firebase.database.*
-import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.ChildEventListener
-import com.kanykeinu.quotesapp.R.id.*
+import com.kanykeinu.quotesapp.adapter.OnItemSelected
 import com.kanykeinu.quotesapp.database.QuotesDatabase
-import com.kanykeinu.quotesapp.database.entity.Category
 import com.kanykeinu.quotesapp.database.entity.Quote
+import com.kanykeinu.quotesapp.prefs.SharedPreferencesManager
 
 class MainActivity : AppCompatActivity() {
 
@@ -35,36 +29,54 @@ class MainActivity : AppCompatActivity() {
         sharedPreferences = SharedPreferencesManager(this)
         database = QuotesDatabase.getInstance(this)
         val subCategoryIds = sharedPreferences?.getSubCategories()
+        initMainQuote()
         initQuotesList()
         if (subCategoryIds != null) {
             fetchQuote(subCategoryIds)
         }
     }
 
-    private fun fetchQuote(ids: MutableSet<String>){
-            for (id in ids){
-                val lId = id.toLong()
-                database?.quoteDao()?.getQuotesBySubCategoryId(lId)
-                        ?.subscribe({ quote ->
-                            quotes.addAll(quote)
-                            runOnUiThread({
-                                initMainQuote()
-                                quotesList.adapter?.notifyDataSetChanged()})
-                        },{},{})
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item?.itemId){
+            R.id.switch_category -> {
+                startActivity(Intent(this,StartActivity::class.java))
+                finish()
             }
+            R.id.switch_subcategory -> {
+                startActivity(Intent(this,SubCategoryActivity::class.java))
+                finish()
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun fetchQuote(ids: MutableSet<String>){
+        for (id in ids){
+            val lId = id.toLong()
+            database?.quoteDao()?.getQuotesBySubCategoryId(lId)
+                    ?.subscribe({ quote ->
+                        quotes.addAll(quote)
+                        runOnUiThread({
+
+                            quotesList.adapter?.notifyDataSetChanged()})
+                    },{},{})
+        }
     }
 
     private fun initQuotesList(){
-        val quoteAdapter = QuoteAdapter(this, quotes ,object : onItemSelected{
-            override fun itemPressed(obj: Any, view: View) {
-                var obj = obj as Quote
+        val quoteAdapter = QuoteAdapter(this, quotes,object : OnItemSelected{
+            override fun itemPressed(obj: Quote) {
+                sharedPreferences?.saveLastQuoteId(obj.id)
                 bigQuoteText.text = obj.text
                 bigQuoteAuthor.text = obj.author
-                Log.d("QuoteModel", "selected is" + obj.text)
-                sharedPreferences?.saveLastQuoteId(obj.id)
             }
-        })
 
+        })
         val quotesLayoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         quotesList.layoutManager = quotesLayoutManager
         quotesList.adapter = quoteAdapter
@@ -78,9 +90,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initMainQuote(){
-        if (sharedPreferences?.getSavedLastQuoteId() != null){
-            bigQuoteText.text = quotes?.get(0)?.text
-            bigQuoteAuthor.text = quotes?.get(0)?.author
+        val id = sharedPreferences?.getSavedLastQuoteId()
+        if (id != null){
+            val savedQuote = database?.quoteDao()?.getById(id)
+            if (savedQuote != null) {
+                bigQuoteText.text = savedQuote.text
+                bigQuoteAuthor.text = savedQuote.author
+            }
+
         }
     }
 

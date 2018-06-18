@@ -7,22 +7,6 @@
     android:layout_gravity="center"
     tools:context=".SubCategoryActivity">
 
-    <!--<GridView-->
-        <!--android:id="@+id/gridViewSubCategory"-->
-        <!--android:layout_width="0dp"-->
-        <!--android:layout_height="0dp"-->
-        <!--android:layout_marginEnd="8dp"-->
-        <!--android:layout_marginLeft="8dp"-->
-        <!--android:layout_marginRight="8dp"-->
-        <!--android:layout_marginStart="8dp"-->
-        <!--android:layout_marginTop="24dp"-->
-        <!--android:layout_marginBottom="8dp"-->
-        <!--app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--app:layout_constraintEnd_toEndOf="parent"-->
-        <!--app:layout_constraintStart_toStartOf="parent"-->
-        <!--app:layout_constraintTop_toTopOf="parent" />-->
-
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/subCategoriesList"
         android:layout_width="0dp"
@@ -31,8 +15,8 @@
         android:layout_marginLeft="32dp"
         android:layout_marginRight="32dp"
         android:layout_marginStart="32dp"
-        android:layoutAnimation="@anim/layout_category_anim"
         android:scrollbars="none"
+        android:layoutAnimation="@anim/layout_category_anim"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

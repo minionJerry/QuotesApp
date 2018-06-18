@@ -8,7 +8,7 @@ import io.reactivex.Flowable
 @Dao
 interface QuoteDao {
     @Query("SELECT * from quote")
-    fun getAll(): Flowable<List<Quote>>
+    fun getAll(): List<Quote>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(quote: Quote) : Long
@@ -20,7 +20,7 @@ interface QuoteDao {
     fun update(quote: Quote)
 
     @Query("Select * from quote where id = :id")
-    fun getById(id : Long) : Flowable<Quote>
+    fun getById(id : Long) : Quote
 
     @Query("Select * from quote where sub_category_id = :id")
     fun getQuotesBySubCategoryId(id : Long) : Flowable<List<Quote>>
