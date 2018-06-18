@@ -51,9 +51,13 @@ class SubCategoryActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when(item?.itemId){
             R.id.actionSave -> {
-                sharedPreferences?.saveSubCategories(getSelectedSubCategories())
-                startActivity(Intent(this,MainActivity::class.java))
-                finish()
+                if (getSelectedSubCategories().isEmpty())
+                    showToast("Выберите хотя бы одну подкатегорию")
+                else {
+                    sharedPreferences?.saveSubCategories(getSelectedSubCategories())
+                    startActivity(Intent(this, MainActivity::class.java))
+                    finish()
+                }
             }
         }
         return super.onOptionsItemSelected(item)

@@ -38,7 +38,7 @@ class SubCategoryAdapter(private val context: Context, private val objects: List
         if (isSelected!!) {
             obj.isSelected = false
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                view.background = ContextCompat.getDrawable(context, R.drawable.category_background)
+                view.background = ContextCompat.getDrawable(context, R.drawable.category_background_pressed)
             }
             (view as TextView).setTextColor(Color.WHITE)
             view.setCompoundDrawablesWithIntrinsicBounds(ContextCompat.getDrawable(context, R.drawable.ic_add_white), null, null, null)
@@ -46,7 +46,7 @@ class SubCategoryAdapter(private val context: Context, private val objects: List
         } else {
             obj.isSelected = true
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                view.background = ContextCompat.getDrawable(context, R.drawable.category_background_pressed)
+                view.background = ContextCompat.getDrawable(context, R.drawable.category_background)
             }
             (view as TextView).setTextColor(ContextCompat.getColor(context, android.R.color.black))
             view.setCompoundDrawablesWithIntrinsicBounds(ContextCompat.getDrawable(context, R.drawable.ic_done_black), null, null, null)
@@ -69,14 +69,14 @@ class SubCategoryAdapter(private val context: Context, private val objects: List
             var isSelected = selectableItem.isSelected
             if (isSelected!!) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    itemView.background = ContextCompat.getDrawable(context, R.drawable.category_background)
+                    itemView.background = ContextCompat.getDrawable(context, R.drawable.category_background_pressed)
                 }
                 (itemView.tvSubCategory as TextView).setTextColor(ContextCompat.getColor(context, android.R.color.black))
                 itemView.tvSubCategory.setCompoundDrawablesWithIntrinsicBounds(ContextCompat.getDrawable(context, R.drawable.ic_done_black), null, null, null)
 
             } else {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    itemView.background = ContextCompat.getDrawable(context, R.drawable.category_background_pressed)
+                    itemView.background = ContextCompat.getDrawable(context, R.drawable.category_background)
                 }
                 (itemView.tvSubCategory as TextView).setTextColor(Color.WHITE)
                 itemView.tvSubCategory.setCompoundDrawablesWithIntrinsicBounds(ContextCompat.getDrawable(context, R.drawable.ic_add_white), null, null, null)

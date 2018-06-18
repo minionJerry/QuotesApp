@@ -40,8 +40,12 @@ class StartActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when(item?.itemId){
             R.id.actionSave -> {
-                sharedPreferences?.saveCategories(getSelectedCategories())
-                startActivity(Intent(this,SubCategoryActivity::class.java))
+                if (getSelectedCategories().isEmpty())
+                    showToast("Выберите хотя бы одну категорию")
+                else {
+                    sharedPreferences?.saveCategories(getSelectedCategories())
+                    startActivity(Intent(this, SubCategoryActivity::class.java))
+                }
             }
         }
         return super.onOptionsItemSelected(item)

@@ -17,6 +17,12 @@ import io.reactivex.functions.Consumer
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.ValueEventListener
 import kotlinx.android.synthetic.main.activity_splash.*
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import com.kanykeinu.quotesapp.R.id.progressBar
+import android.animation.ValueAnimator
+import android.graphics.Color
+import android.os.Handler
 
 
 class SplashActivity : Activity() {
@@ -33,6 +39,20 @@ class SplashActivity : Activity() {
         database = QuotesDatabase.getInstance(this)
         var quotes = database?.quoteDao()?.getAll()
         checkQuotesSize(quotes)
+        progressBar.getProgressDrawable().setColorFilter(
+                Color.RED, android.graphics.PorterDuff.Mode.SRC_IN)
+        // animation
+//        val animator = ValueAnimator.ofInt(0, progressBar.max)
+//        animator.duration = 3000
+//        animator.addUpdateListener { animation -> progressBar.progress = animation.animatedValue as Int }
+//        animator.addListener(object : AnimatorListenerAdapter() {
+//            override fun onAnimationEnd(animation: Animator) {
+//                super.onAnimationEnd(animation)
+//                // start your activity here
+//                checkQuotesSize(quotes)
+//            }
+//        })
+//        animator.start()
     }
 
 
@@ -45,7 +65,6 @@ class SplashActivity : Activity() {
         if (quotes?.size == 0) {
             initFirebase()
             attachDatabaseReadListener()
-            return
         }else {
             startActivity(Intent(this, MainActivity::class.java))
             finish()
@@ -57,11 +76,30 @@ class SplashActivity : Activity() {
         mQuotesDatabaseReference = mFirebaseDatabase!!.getReference().child("quotes")
     }
 
+    private var pStatus: Int = 0
+
+    private val handler = Handler()
+
     private fun attachDatabaseReadListener() {
         if (mChildListener == null && mEventListener==null) {
-            progressBar.visibility = View.VISIBLE
             mChildListener = object : ChildEventListener {
                 override fun onChildAdded(dataSnapshot: DataSnapshot, prevChildKey: String?) {
+//                    Thread(Runnable {  while (pStatus < progressBar.max) {
+//                        pStatus += 100/7
+//                        handler.post {
+//                            progressBar.progress = pStatus
+//                            tvloadText.text = pStatus.toString() + "%"
+//                        }
+//                        try {
+//                            val category = dataSnapshot.getValue<CategoryModel>(CategoryModel::class.java)
+//                            category?.category = removePreffix(category?.category!!)
+//                            addCategoryToLocalDb(category)
+//                            println("Previous Post ID: " + category)
+//                        } catch (e: InterruptedException) {
+//                            e.printStackTrace()
+//                        }
+//                    } }).start()
+
                     val category = dataSnapshot.getValue<CategoryModel>(CategoryModel::class.java)
                     category?.category = removePreffix(category?.category!!)
                     addCategoryToLocalDb(category)
@@ -81,7 +119,6 @@ class SplashActivity : Activity() {
                 override fun onCancelled(p0: DatabaseError?) {}
 
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    progressBar.visibility = View.GONE
                     println("We're done loading the initial " + dataSnapshot.childrenCount + " items")
                     startActivity(Intent(this@SplashActivity, StartActivity::class.java))
                     finish()
