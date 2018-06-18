@@ -62,7 +62,6 @@ class MainActivity : AppCompatActivity() {
                     ?.subscribe({ quote ->
                         quotes.addAll(quote)
                         runOnUiThread({
-
                             quotesList.adapter?.notifyDataSetChanged()})
                     },{},{})
         }
@@ -71,9 +70,9 @@ class MainActivity : AppCompatActivity() {
     private fun initQuotesList(){
         val quoteAdapter = QuoteAdapter(this, quotes,object : OnItemSelected{
             override fun itemPressed(obj: Quote) {
-                sharedPreferences?.saveLastQuoteId(obj.id)
                 bigQuoteText.text = obj.text
                 bigQuoteAuthor.text = obj.author
+                sharedPreferences?.saveLastQuoteId(obj.id)
             }
 
         })
@@ -86,7 +85,6 @@ class MainActivity : AppCompatActivity() {
         quotesList.setLayoutAnimation(controller);
         quoteAdapter.notifyDataSetChanged();
         quotesList.scheduleLayoutAnimation();
-
     }
 
     private fun initMainQuote(){
@@ -97,7 +95,6 @@ class MainActivity : AppCompatActivity() {
                 bigQuoteText.text = savedQuote.text
                 bigQuoteAuthor.text = savedQuote.author
             }
-
         }
     }
 

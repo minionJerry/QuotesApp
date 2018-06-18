@@ -10,7 +10,7 @@
         android:id="@+id/big"
         android:layout_below="@id/categoriesList"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="30dp"
         android:layout_height="320dp"
         android:layout_width="300dp" />
 
@@ -20,7 +20,7 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:orientation="horizontal"
-      android:layout_marginTop="16dp"
+      android:layout_marginTop="4dp"
       android:layout_marginBottom="8dp"
       android:layoutAnimation="@anim/layout_quote_anim"/>
 

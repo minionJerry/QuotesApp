@@ -2,8 +2,10 @@ package com.kanykeinu.quotesapp.adapter
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.PorterDuff
 import android.net.Uri
 import android.os.Build
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -28,20 +30,18 @@ class CategoryAdapter(private val context: Context, private val objects: List<Se
         val isSelected = obj.isSelected
         if (isSelected) {
             obj.isSelected = false
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                view.background = context.getDrawable(R.drawable.category_background)
-                (view.category as TextView).setTextColor(Color.WHITE)
-//                view.category.setCompoundDrawablesWithIntrinsicBounds(context.getDrawable(R.drawable.ic_add_white),null,null,null)
-                notifyItemChanged(position)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                view.background = ContextCompat.getDrawable(context,R.drawable.category_background_pressed)
             }
+            (view.category as TextView).setTextColor(Color.WHITE)
+            notifyItemChanged(position)
         } else {
             obj.isSelected = true
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                view.background = context.getDrawable(R.drawable.category_background_pressed)
-                (view.category as TextView).setTextColor(context.getColor(android.R.color.black))
-//                view.category.setCompoundDrawablesWithIntrinsicBounds(context.getDrawable(R.drawable.ic_done_black),null,null,null)
-                notifyItemChanged(position)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                view.background = ContextCompat.getDrawable(context,R.drawable.category_background)
             }
+            (view.category as TextView).setTextColor(ContextCompat.getColor(context,android.R.color.black))
+            notifyItemChanged(position)
         }
     }
 
@@ -67,17 +67,15 @@ class CategoryAdapter(private val context: Context, private val objects: List<Se
             itemView.category?.text = category.selectableItem.category
             val isSelected = category.isSelected
             if (isSelected) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    itemView.background = context.getDrawable(R.drawable.category_background_pressed)
-                    (itemView.category as TextView).setTextColor(context.getColor(android.R.color.black))
-//                    itemView.category.setCompoundDrawablesWithIntrinsicBounds(context.getDrawable(R.drawable.ic_done_black),null,null,null)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    itemView.background = ContextCompat.getDrawable(context,R.drawable.category_background_pressed)
                 }
+                (itemView.category as TextView).setTextColor(ContextCompat.getColor(context,android.R.color.black))
             } else {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    itemView.background = context.getDrawable(R.drawable.category_background)
-                    (itemView.category as TextView).setTextColor(Color.WHITE)
-//                    itemView.category.setCompoundDrawablesWithIntrinsicBounds(context.getDrawable(R.drawable.ic_add_white),null,null,null)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    itemView.background = ContextCompat.getDrawable(context,R.drawable.category_background)
                 }
+                (itemView.category as TextView).setTextColor(Color.WHITE)
             }
         }
     }

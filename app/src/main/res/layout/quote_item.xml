@@ -16,9 +16,9 @@
     android:background="@color/colorViolet"
     android:layout_height="150dp"
     card_view:cardCornerRadius="4dp"
-    card_view:cardElevation="4dp"
+    card_view:cardElevation="3dp"
     app:cardUseCompatPadding="true"
-    card_view:cardMaxElevation="6dp"
+    card_view:cardMaxElevation="3dp"
     >
 
     <android.support.constraint.ConstraintLayout

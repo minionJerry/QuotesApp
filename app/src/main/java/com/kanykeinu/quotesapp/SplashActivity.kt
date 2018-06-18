@@ -3,6 +3,7 @@ package com.kanykeinu.quotesapp
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import com.google.firebase.database.*
 import com.kanykeinu.quotesapp.database.QuotesDatabase
 import com.kanykeinu.quotesapp.database.entity.Category
@@ -15,7 +16,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.Consumer
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.ValueEventListener
-
+import kotlinx.android.synthetic.main.activity_splash.*
 
 
 class SplashActivity : Activity() {
@@ -32,11 +33,6 @@ class SplashActivity : Activity() {
         database = QuotesDatabase.getInstance(this)
         var quotes = database?.quoteDao()?.getAll()
         checkQuotesSize(quotes)
-//        database?.quoteDao()?.getAll()
-//                        ?.observeOn(AndroidSchedulers.mainThread())
-//                        ?.subscribe(Consumer { quotes ->
-//                           checkQuotesSize(quotes)
-//                        })
     }
 
 
@@ -63,6 +59,7 @@ class SplashActivity : Activity() {
 
     private fun attachDatabaseReadListener() {
         if (mChildListener == null && mEventListener==null) {
+            progressBar.visibility = View.VISIBLE
             mChildListener = object : ChildEventListener {
                 override fun onChildAdded(dataSnapshot: DataSnapshot, prevChildKey: String?) {
                     val category = dataSnapshot.getValue<CategoryModel>(CategoryModel::class.java)
@@ -84,6 +81,7 @@ class SplashActivity : Activity() {
                 override fun onCancelled(p0: DatabaseError?) {}
 
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    progressBar.visibility = View.GONE
                     println("We're done loading the initial " + dataSnapshot.childrenCount + " items")
                     startActivity(Intent(this@SplashActivity, StartActivity::class.java))
                     finish()
