@@ -6,12 +6,13 @@
     <color name="colorSecondary">#1b5e20</color>
     <color name="colorSecondaryDart">#003300</color>
     <color name="colorSecondaryLight">#4c8c4a</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#003300</color>
     <color name="colorCategory">#055E4F</color>
     <color name="colorBackground">#D41B5E</color>
     <color name="colorViolet">#24145F</color>
     <color name="colorYellow">#F6CE3B</color>
     <color name="colorLightViolet">#5A3CB2</color>
     <color name="colorPressed">#087f23</color>
+    <color name="colorProgressBar">#19384A</color>
 
 </resources>
