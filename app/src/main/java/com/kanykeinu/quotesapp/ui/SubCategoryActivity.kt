@@ -1,44 +1,33 @@
-package com.kanykeinu.quotesapp
+package com.kanykeinu.quotesapp.ui
 
 import android.content.Intent
-import android.graphics.Color
-import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Parcelable
-import android.util.Log
-import android.view.View
 import com.kanykeinu.quotesapp.adapter.SubCategoryAdapter
-import com.kanykeinu.quotesapp.database.QuotesDatabase
 import com.kanykeinu.quotesapp.database.entity.SubCategory
 import kotlinx.android.synthetic.main.activity_sub_category.*
-import java.util.*
 import android.support.v7.widget.GridLayoutManager
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.*
-import com.kanykeinu.quotesapp.Constants.Companion.CATEGORIES
+import com.kanykeinu.quotesapp.QuotesApp.Companion.database
+import com.kanykeinu.quotesapp.QuotesApp.Companion.sharedPreferences
+import com.kanykeinu.quotesapp.R
 import com.kanykeinu.quotesapp.model.SelectableItem
-import com.kanykeinu.quotesapp.prefs.SharedPreferencesManager
+import com.kanykeinu.quotesapp.showToast
 
 
 class SubCategoryActivity : AppCompatActivity() {
 
-    private var database: QuotesDatabase? = null
     private var categoiesIds: MutableSet<String>? = mutableSetOf()
     private var subCategoryAdapter: SubCategoryAdapter? = null
     private var formattedSubCategories = arrayListOf<SubCategory>()
-
-    private var sharedPreferences: SharedPreferencesManager? = null
     private val subCategoriesMap = mutableListOf<SelectableItem<SubCategory>>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sub_category)
-        sharedPreferences = SharedPreferencesManager(this)
         supportActionBar?.title = getString(R.string.choose_subcategory)
-        categoiesIds = sharedPreferences?.getCategories()
-        database = QuotesDatabase.getInstance(this)
+        categoiesIds = sharedPreferences.getCategories()
         if (categoiesIds!= null)
             fetchSubCategories()
     }
@@ -52,9 +41,9 @@ class SubCategoryActivity : AppCompatActivity() {
         when(item?.itemId){
             R.id.actionSave -> {
                 if (getSelectedSubCategories().isEmpty())
-                    showToast("Выберите хотя бы одну подкатегорию")
+                    showToast(getString(R.string.choose_at_least_subcategory))
                 else {
-                    sharedPreferences?.saveSubCategories(getSelectedSubCategories())
+                    sharedPreferences.saveSubCategories(getSelectedSubCategories())
                     startActivity(Intent(this, MainActivity::class.java))
                     finish()
                 }
@@ -65,18 +54,18 @@ class SubCategoryActivity : AppCompatActivity() {
 
         private fun fetchSubCategories() {
             for (id in categoiesIds!!) {
-                var lId = id.toLong()
-                var subCat = database?.subCategoryDao()?.getSubCategoriesByCategory(lId)
-                formattedSubCategories.addAll(divideSubCategory(subCat!!))
+                val lId = id.toLong()
+                val subCat = database.subCategoryDao().getSubCategoriesByCategory(lId)
+                formattedSubCategories.addAll(divideSubCategory(subCat))
             }
             initGridView()
     }
 
     private fun divideSubCategory(subCategories : List<SubCategory>) : List<SubCategory>{
-        var copy = subCategories
+        val copy = subCategories
         var i = 0
         for(subCategory in subCategories){
-            var title = subCategory.subCategory?.split(",",":")
+            val title = subCategory.subCategory?.split(",",":")
             copy[i].subCategory = title?.get(0)
             i++
         }

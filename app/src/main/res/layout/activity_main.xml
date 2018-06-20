@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.kanykeinu.quotesapp.MainActivity">
+    tools:context="com.kanykeinu.quotesapp.ui.MainActivity">
 
 
     <include layout="@layout/quote_item_big"

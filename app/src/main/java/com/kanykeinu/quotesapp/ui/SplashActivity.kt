@@ -1,11 +1,10 @@
-package com.kanykeinu.quotesapp
+package com.kanykeinu.quotesapp.ui
 
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import com.google.firebase.database.*
-import com.kanykeinu.quotesapp.database.QuotesDatabase
 import com.kanykeinu.quotesapp.database.entity.Category
 import com.kanykeinu.quotesapp.database.entity.Quote
 import com.kanykeinu.quotesapp.database.entity.SubCategory
@@ -14,6 +13,12 @@ import com.kanykeinu.quotesapp.model.QuoteModel
 import com.kanykeinu.quotesapp.model.SubCategoryModel
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.ValueEventListener
+import com.kanykeinu.quotesapp.QuotesApp.Companion.database
+import com.kanykeinu.quotesapp.R
+import com.kanykeinu.quotesapp.showToast
+import io.reactivex.Single
+import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_splash.*
 
 
 class SplashActivity : Activity() {
@@ -22,14 +27,12 @@ class SplashActivity : Activity() {
     private var mQuotesDatabaseReference: DatabaseReference? = null
     private var mChildListener: ChildEventListener? = null
     private var mEventListener: ValueEventListener? = null
-    private var database: QuotesDatabase? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
-        database = QuotesDatabase.getInstance(this)
-        var quotes = database?.quoteDao()?.getAll()
-        checkQuotesSize(quotes)
+        var quotesList = database.quoteDao().getAll()
+        checkQuotesSize(quotesList)
     }
 
 
@@ -40,6 +43,8 @@ class SplashActivity : Activity() {
 
     private fun checkQuotesSize(quotes: List<Quote>?){
         if (quotes?.size == 0) {
+            progressBar.visibility = View.VISIBLE
+            tvloadText.visibility = View.VISIBLE
             initFirebase()
             attachDatabaseReadListener()
         }else {
@@ -76,9 +81,11 @@ class SplashActivity : Activity() {
                 override fun onCancelled(p0: DatabaseError?) {}
 
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    println("We're done loading the initial " + dataSnapshot.childrenCount + " items")
-                    startActivity(Intent(this@SplashActivity, StartActivity::class.java))
-                    finish()
+                    runOnUiThread {
+                        println("We're done loading the initial " + dataSnapshot.childrenCount + " items")
+                        startActivity(Intent(this@SplashActivity, CategoryActivity::class.java))
+                        finish()
+                    }
                 }
             }
 
@@ -104,19 +111,31 @@ class SplashActivity : Activity() {
     }
 
     private fun addCategoryToLocalDb(categoryModel: CategoryModel){
-        val categoryId  = database?.categoryDao()?.insert(Category(0,categoryModel.category))
-        if (categoryId != null) {
-            addSubCategoryToLocalDb(categoryModel.subCategories,categoryId)
-        }
+        Single.fromCallable {
+            val categoryId = database.categoryDao().insert(Category(0, categoryModel.category))
+            addSubCategoryToLocalDb(categoryModel.subCategories, categoryId)
+            }
+            .subscribeOn(Schedulers.io())
+            .subscribe(
+                 {}, {
+                error -> showToast(error.localizedMessage)
+            })
+
+
     }
 
     private fun addSubCategoryToLocalDb(subCategoryModels: List<SubCategoryModel>?, categoryId : Long){
         if (subCategoryModels != null) {
             for (subCategory in subCategoryModels) {
-                val subCategoryId = database?.subCategoryDao()?.insert(SubCategory(0, subCategory.subCategory, categoryId))
-                if (subCategoryId != null) {
+                Single.fromCallable{
+                    val subCategoryId = database.subCategoryDao().insert(SubCategory(0, subCategory.subCategory, categoryId))
                     addQuotesToLocalDb(subCategory.quotes, subCategoryId)
                 }
+                        .subscribeOn(Schedulers.io())
+                        .subscribe({},{
+                            error -> showToast(error.localizedMessage)
+                        })
+
             }
         }
     }
@@ -124,7 +143,13 @@ class SplashActivity : Activity() {
     private fun addQuotesToLocalDb(quotes: List<QuoteModel>?, subCategoryId: Long){
         if (quotes != null) {
             for (quote in quotes){
-                database?.quoteDao()?.insert(Quote(0, quote.author!!, quote.quote!!,subCategoryId))
+                Single.fromCallable{
+                    database.quoteDao().insert(Quote(0, quote.author!!, quote.quote!!,subCategoryId))
+                }
+                        .subscribeOn(Schedulers.io())
+                        .subscribe({},{
+                            error -> showToast(error.localizedMessage)
+                        })
             }
         }
     }
