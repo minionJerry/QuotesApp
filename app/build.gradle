@@ -4,14 +4,17 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'org.jetbrains.kotlin.android.extensions'
 
+def versionMajor = 1
+def versionMinor = 0
+
 android {
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.kanykeinu.quotesapp"
         minSdkVersion 14
         targetSdkVersion 27
-        versionCode 1
-        versionName "1.0"
+        versionCode versionMajor * 100 + versionMinor * 10
+        versionName "${versionMajor}.${versionMinor}"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
