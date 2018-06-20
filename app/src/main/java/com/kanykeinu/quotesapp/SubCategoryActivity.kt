@@ -78,7 +78,6 @@ class SubCategoryActivity : AppCompatActivity() {
         for(subCategory in subCategories){
             var title = subCategory.subCategory?.split(",",":")
             copy[i].subCategory = title?.get(0)
-            Log.e("Tag",title?.get(0))
             i++
         }
         return copy

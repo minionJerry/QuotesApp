@@ -13,6 +13,7 @@ import kotlinx.android.synthetic.main.quote_item.view.*
  * Created by KanykeiNu on 14.05.2018.
  */
 class QuoteAdapter (private val context: Context, private val objects: MutableList<Quote>, private val onQuoteSelected: OnItemSelected) : BaseAdapter<Quote>(context,objects){
+
     override fun onHolderClick(obj: Quote, view: View, position: Int) {
         onQuoteSelected.itemPressed(obj)
     }
@@ -37,8 +38,4 @@ class QuoteAdapter (private val context: Context, private val objects: MutableLi
             itemView.author.text = quote.author
         }
     }
-}
-
-interface OnItemSelected{
-    fun itemPressed(obj: Quote)
 }

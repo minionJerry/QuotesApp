@@ -28,15 +28,6 @@ abstract class BaseAdapter<T>(private val mContext: Context, private var objects
         return setSize()
     }
 
-
-    override fun getItemId(position: Int): Long {
-        return super.getItemId(position)
-    }
-
-    override fun getItemViewType(position: Int): Int {
-        return super.getItemViewType(position)
-    }
-
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         onBindData(holder, objects.get(position))
         holder.itemView.setOnClickListener { onHolderClick(objects[position], holder.itemView as View, position) }
