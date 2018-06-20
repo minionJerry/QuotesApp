@@ -77,7 +77,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun initMainQuote(){
         val id = sharedPreferences.getSavedLastQuoteId()
-        if (id != null){
+        if (id!= null && id.toInt() != 0){
             val savedQuote = database.quoteDao().getById(id)
                 bigQuoteText.text = savedQuote.text
                 bigQuoteAuthor.text = savedQuote.author
