@@ -7,6 +7,7 @@ class Constants {
         val SUB_CATEGORIES = "SUB_CATEGORIES"
         val SUB_CATEGORY_ID = "SUB_CATEGORY_ID"
         val QUOTE = "QUOTE"
+        val IS_FIRST_ENTRY = "IS_FIRST_ENTRY"
     }
 
 }

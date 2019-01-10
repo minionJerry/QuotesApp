@@ -14,6 +14,11 @@ import com.kanykeinu.quotesapp.QuotesApp.Companion.sharedPreferences
 import com.kanykeinu.quotesapp.R
 import com.kanykeinu.quotesapp.adapter.OnItemSelected
 import com.kanykeinu.quotesapp.database.entity.Quote
+import io.reactivex.Observable
+import io.reactivex.Scheduler
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -53,11 +58,12 @@ class MainActivity : AppCompatActivity() {
         for (id in ids){
             val lId = id.toLong()
             database.quoteDao().getQuotesBySubCategoryId(lId)
-                    .subscribe({ quote ->
-                        quotes.addAll(quote)
-                        runOnUiThread({
-                            quotesList.adapter?.notifyDataSetChanged()})
-                    },{},{})
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe{ quote ->
+                            quotes.addAll(quote)
+                            quotesList.adapter?.notifyDataSetChanged()
+                    }
         }
     }
 
@@ -78,9 +84,14 @@ class MainActivity : AppCompatActivity() {
     private fun initMainQuote(){
         val id = sharedPreferences.getSavedLastQuoteId()
         if (id!= null && id.toInt() != 0){
-            val savedQuote = database.quoteDao().getById(id)
-                bigQuoteText.text = savedQuote.text
-                bigQuoteAuthor.text = savedQuote.author
+            database.quoteDao().getById(id)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe{ savedQuote ->
+                        bigQuoteText.text = savedQuote.text
+                        bigQuoteAuthor.text = savedQuote.author
+                    }
+
         }
     }
 

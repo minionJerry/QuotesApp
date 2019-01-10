@@ -13,7 +13,9 @@ import com.kanykeinu.quotesapp.QuotesApp.Companion.database
 import com.kanykeinu.quotesapp.QuotesApp.Companion.sharedPreferences
 import com.kanykeinu.quotesapp.R
 import com.kanykeinu.quotesapp.model.SelectableItem
-import com.kanykeinu.quotesapp.showToast
+import com.kanykeinu.quotesapp.extension.showToast
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
 
 class SubCategoryActivity : AppCompatActivity() {
@@ -56,9 +58,18 @@ class SubCategoryActivity : AppCompatActivity() {
             for (id in categoiesIds!!) {
                 val lId = id.toLong()
                 val subCat = database.subCategoryDao().getSubCategoriesByCategory(lId)
-                formattedSubCategories.addAll(divideSubCategory(subCat))
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeOn(Schedulers.io())
+                        .subscribe({ subCategories ->
+                            formattedSubCategories.addAll(divideSubCategory(subCategories))
+                            initGridView()
+                        },{
+                            error -> showToast(error.localizedMessage)
+                        },{
+                            showToast("bla")
+                        })
             }
-            initGridView()
+
     }
 
     private fun divideSubCategory(subCategories : List<SubCategory>) : List<SubCategory>{
@@ -74,13 +85,17 @@ class SubCategoryActivity : AppCompatActivity() {
 
     private fun initGridView(){
         initMap()
+        subCategoryAdapter = SubCategoryAdapter(this,subCategoriesMap)
         val manager = GridLayoutManager(this, 2)
         manager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
-                return if (formattedSubCategories.get(position).subCategory!!.length > 10) 2 else 1
+                when (subCategoryAdapter!!.getItemViewType(position)){
+                    subCategoryAdapter!!.TYPE_BIG_SUBCATEGORY -> return 2
+                    subCategoryAdapter!!.TYPE_REGULAR_SUBCATEGORY ->  return 1
+                }
+                return 1
             }
         }
-        subCategoryAdapter = SubCategoryAdapter(this,subCategoriesMap)
         subCategoriesList.layoutManager = manager
         subCategoriesList.adapter = subCategoryAdapter
     }

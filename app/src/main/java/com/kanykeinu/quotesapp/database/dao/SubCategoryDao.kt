@@ -4,6 +4,7 @@ import android.arch.persistence.room.*
 import com.kanykeinu.quotesapp.database.entity.Category
 import com.kanykeinu.quotesapp.database.entity.SubCategory
 import io.reactivex.Flowable
+import io.reactivex.Observable
 
 @Dao
 interface SubCategoryDao {
@@ -23,6 +24,6 @@ interface SubCategoryDao {
     fun getById(id : Int) : Flowable<SubCategory>
 
     @Query("Select * from sub_category where category_id = :categoryId ")
-    fun getSubCategoriesByCategory(categoryId  : Long) : List<SubCategory>
+    fun getSubCategoriesByCategory(categoryId  : Long) : Flowable<List<SubCategory>>
 
 }

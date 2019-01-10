@@ -4,6 +4,7 @@ import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import com.kanykeinu.quotesapp.QuotesApp.Companion.database
@@ -12,7 +13,9 @@ import com.kanykeinu.quotesapp.R
 import com.kanykeinu.quotesapp.adapter.CategoryAdapter
 import com.kanykeinu.quotesapp.database.entity.Category
 import com.kanykeinu.quotesapp.model.SelectableItem
-import com.kanykeinu.quotesapp.showToast
+import com.kanykeinu.quotesapp.extension.showToast
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_start.*
 
 class CategoryActivity : AppCompatActivity() {
@@ -49,13 +52,24 @@ class CategoryActivity : AppCompatActivity() {
 
     private fun fetchCategories(){
         val categories = database.categoryDao().getAll()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe ({
+                    list -> createSelectableCategoryList(list)
+                },{
+                    it -> showToast(it.localizedMessage)
+                },{
+                   showToast("bla")
+                })
+    }
+
+    private fun createSelectableCategoryList(categories : List<Category>){
         for (category in categories){
             val selectableItem = SelectableItem<Category>(category,false)
             selectableCategories.add(selectableItem)
         }
         initCategoriesRecyclerView()
     }
-
 
     private fun initCategoriesRecyclerView(){
         categoryAdapter = CategoryAdapter(this, selectableCategories)
