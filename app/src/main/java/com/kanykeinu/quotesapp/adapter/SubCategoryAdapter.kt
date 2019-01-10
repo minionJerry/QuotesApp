@@ -19,6 +19,9 @@ import kotlinx.android.synthetic.main.subcategory_item.view.*
  */
 class SubCategoryAdapter(private val context: Context, private val objects: List<SelectableItem<SubCategory>>) : BaseAdapter<SelectableItem<SubCategory>>(context,objects) {
 
+    val TYPE_BIG_SUBCATEGORY = 2
+    val TYPE_REGULAR_SUBCATEGORY = 1
+
     override fun onBindData(holder: RecyclerView.ViewHolder, obj: SelectableItem<SubCategory>) {
         val viewHolder = holder as SubCategoryViewHolder
         viewHolder.bind(obj, context)
@@ -47,6 +50,12 @@ class SubCategoryAdapter(private val context: Context, private val objects: List
 
     override fun setSize(): Int {
         return objects.size
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        if (objects[position].selectableItem.subCategory!!.length > 7)
+            return TYPE_BIG_SUBCATEGORY
+        return TYPE_REGULAR_SUBCATEGORY
     }
 
     override fun setViewHolder(parent: ViewGroup): RecyclerView.ViewHolder {

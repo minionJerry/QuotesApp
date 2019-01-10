@@ -82,10 +82,6 @@ class SplashActivity : Activity() {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     Log.d("Finished loading data", dataSnapshot.childrenCount.toString())
                     saveDataToRoomDb()
-
-                    // start new screen after saving all data to local db
-                    startActivity(Intent(this@SplashActivity, CategoryActivity::class.java))
-                    finish()
                 }
             }
             mQuotesDatabaseReference?.addChildEventListener(mChildListener)
@@ -94,20 +90,23 @@ class SplashActivity : Activity() {
     }
 
     private fun saveDataToRoomDb(){
-       dataFromFirebase.forEach { category ->
-           addCategoryToLocalDb(category)
-       }
-    }
-
-    private fun addCategoryToLocalDb (categoryModel: CategoryModel){
         Observable.fromCallable {
-            Log.d(categoryModel.category, " ${categoryModel}")
-            val categoryId = database.categoryDao().insert(Category(0, categoryModel.category))
-            addSubCategoryToLocalDb(categoryModel.subCategories, categoryId)
+            dataFromFirebase.forEach { category ->
+                addCategoryToLocalDb(category)
+            }
         }
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeOn(Schedulers.io())
-        .subscribe()
+        .subscribe {
+            QuotesApp.sharedPreferences.saveEntryStatus(true)
+            startActivity(Intent(this@SplashActivity, CategoryActivity::class.java))
+            finish()
+        }
+    }
+
+    private fun addCategoryToLocalDb (categoryModel: CategoryModel){
+        val categoryId = database.categoryDao().insert(Category(0, categoryModel.category))
+        addSubCategoryToLocalDb(categoryModel.subCategories, categoryId)
     }
 
     private fun addSubCategoryToLocalDb (subCategoryModels: List<SubCategoryModel>?, categoryId : Long){

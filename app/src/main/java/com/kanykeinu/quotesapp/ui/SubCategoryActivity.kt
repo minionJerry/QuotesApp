@@ -65,6 +65,8 @@ class SubCategoryActivity : AppCompatActivity() {
                             initGridView()
                         },{
                             error -> showToast(error.localizedMessage)
+                        },{
+                            showToast("bla")
                         })
             }
 
@@ -83,13 +85,17 @@ class SubCategoryActivity : AppCompatActivity() {
 
     private fun initGridView(){
         initMap()
+        subCategoryAdapter = SubCategoryAdapter(this,subCategoriesMap)
         val manager = GridLayoutManager(this, 2)
         manager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
-                return if (formattedSubCategories.get(position).subCategory!!.length > 10) 2 else 1
+                when (subCategoryAdapter!!.getItemViewType(position)){
+                    subCategoryAdapter!!.TYPE_BIG_SUBCATEGORY -> return 2
+                    subCategoryAdapter!!.TYPE_REGULAR_SUBCATEGORY ->  return 1
+                }
+                return 1
             }
         }
-        subCategoryAdapter = SubCategoryAdapter(this,subCategoriesMap)
         subCategoriesList.layoutManager = manager
         subCategoriesList.adapter = subCategoryAdapter
     }

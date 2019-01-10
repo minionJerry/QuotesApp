@@ -58,6 +58,8 @@ class CategoryActivity : AppCompatActivity() {
                     list -> createSelectableCategoryList(list)
                 },{
                     it -> showToast(it.localizedMessage)
+                },{
+                   showToast("bla")
                 })
     }
 
