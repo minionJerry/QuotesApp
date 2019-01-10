@@ -2,26 +2,17 @@ package com.kanykeinu.quotesapp.adapter
 
 import android.content.Context
 import android.graphics.Color
-import android.net.Uri
 import android.os.Build
 import android.support.v4.content.ContextCompat
-import android.support.v4.content.ContextCompat.getColor
-import android.support.v4.content.ContextCompat.getDrawable
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import com.kanykeinu.quotesapp.R
-import com.kanykeinu.quotesapp.R.id.parent
-import com.kanykeinu.quotesapp.database.entity.Category
 import com.kanykeinu.quotesapp.database.entity.SubCategory
 import com.kanykeinu.quotesapp.model.SelectableItem
-import com.kanykeinu.quotesapp.showToast
-import kotlinx.android.synthetic.main.category_item.view.*
 import kotlinx.android.synthetic.main.subcategory_item.view.*
-import java.util.*
 
 /**
  * Created by KanykeiNu on 14.05.2018.

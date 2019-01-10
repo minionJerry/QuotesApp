@@ -3,11 +3,12 @@ package com.kanykeinu.quotesapp.database.dao
 import android.arch.persistence.room.*
 import com.kanykeinu.quotesapp.database.entity.Category
 import io.reactivex.Flowable
+import io.reactivex.Observable
 
 @Dao
 interface CategoryDao {
     @Query("SELECT * from category")
-    fun getAll(): MutableList<Category>
+    fun getAll(): Flowable<List<Category>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(category: Category) : Long

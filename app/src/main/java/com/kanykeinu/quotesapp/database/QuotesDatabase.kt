@@ -14,28 +14,31 @@ import com.kanykeinu.quotesapp.model.CategoryModel
 import com.kanykeinu.quotesapp.model.QuoteModel
 import com.kanykeinu.quotesapp.model.SubCategoryModel
 
-@Database(entities = arrayOf(Category::class, SubCategory::class, Quote::class), version = 1)
+@Database(entities = arrayOf(Category::class, SubCategory::class, Quote::class), version = 2)
 abstract class QuotesDatabase : RoomDatabase() {
     abstract fun categoryDao(): CategoryDao
     abstract fun subCategoryDao(): SubCategoryDao
     abstract fun quoteDao(): QuoteDao
 
     companion object {
-        private var INSTANCE: QuotesDatabase? = null
+        private var databseInstance: QuotesDatabase? = null
 
         fun getInstance(context: Context): QuotesDatabase? {
-            if (INSTANCE == null) {
+            if (databseInstance == null) {
                 synchronized(QuotesDatabase::class.java) {
-                    if (INSTANCE == null) {
-                        INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
+                    if (databseInstance == null) {
+                        databseInstance = Room.databaseBuilder(context.getApplicationContext(),
                                 QuotesDatabase::class.java, "Quotes.db")
                                 .fallbackToDestructiveMigration()
-                                .allowMainThreadQueries()
                                 .build()
                     }
                 }
             }
-            return INSTANCE
+            return databseInstance
+        }
+
+        fun clearDatabase(){
+            databseInstance = null
         }
     }
 }
